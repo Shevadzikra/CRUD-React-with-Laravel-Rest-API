@@ -17,10 +17,22 @@ class App extends Component {
         this.setState({ loader: true })
         const customers = await axios.get(this.state.url)
         this.setState({ customers: customers.data, loader: false })
-    } 
+    }
+    
+    deleteCustomer = async id => {
+        this.setState({ loader: true })
+        await axios.delete(`${this.state.url}/${id}`)
+
+        this.getCustomers()
+    }
 
     componentDidMount() {
         this.getCustomers()
+    }
+
+    onDelete = id => {
+        // console.log('app: ', id)
+        this.deleteCustomer(id);
     }
 
     render() {
@@ -37,7 +49,10 @@ class App extends Component {
                 <div className="ui main container">
                     <Myform />
                     { this.state.loader ? <Loader /> : "" }
-                    <CustomerList customers={ this.state.customers }/>
+                    <CustomerList 
+                        customers={this.state.customers} 
+                        onDelete={this.onDelete} 
+                    />
                 </div>
             </div>
         );
