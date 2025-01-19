@@ -8,6 +8,7 @@ import './style.css'
 class App extends Component {
     state = {
         customers: [],
+        customer: {},
         loader: false,
         url: "http://127.0.0.1:8000/api/customers"
     }   // membuat array kosong customers
@@ -26,6 +27,29 @@ class App extends Component {
         this.getCustomers()
     }
 
+    createCustomer = async data => {
+        this.setState({ loader: true })
+        await axios.post(this.state.url, {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            email: data.email,
+        })
+
+        this.getCustomers()
+    }
+
+    editCustomer = async (data) => {
+        // clear customer obj
+        this.setState({ customer: {}, loader: true })
+        await axios.put(`${this.state.url}/${data.id}`, {
+            first_name: data.first_name,
+            last_name: data.last_name,
+            email: data.email,
+        })
+
+        this.getCustomers()
+    }
+
     componentDidMount() {
         this.getCustomers()
     }
@@ -33,6 +57,21 @@ class App extends Component {
     onDelete = id => {
         // console.log('app: ', id)
         this.deleteCustomer(id);
+    }
+
+    onEdit = data => {
+        // console.log('app: ', data)
+        this.setState({ customer: data })
+    }
+
+    onFormSubmit = data => {
+        // console.log('app: ', data)
+        if(data.isEdit) {
+            // if edit true
+            this.editCustomer(data)
+        } else {
+            this.createCustomer(data)
+        }
     }
 
     render() {
@@ -47,11 +86,14 @@ class App extends Component {
                 </div>
                 
                 <div className="ui main container">
-                    <Myform />
+                    <Myform 
+                    customer={this.state.customer} 
+                    onFormSubmit={this.onFormSubmit}/>
                     { this.state.loader ? <Loader /> : "" }
                     <CustomerList 
                         customers={this.state.customers} 
-                        onDelete={this.onDelete} 
+                        onDelete={this.onDelete}
+                        onEdit={this.onEdit} 
                     />
                 </div>
             </div>

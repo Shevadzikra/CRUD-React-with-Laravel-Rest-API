@@ -6,6 +6,12 @@ class CustomerList extends Component {
         // console.log('customer list: ', id)
         this.props.onDelete(id)
     }
+
+    onEdit = data => {
+        this.props.onEdit(data)
+        // console.log('customer list: ', id)
+    }
+
     render() {
         const customers = this.props.customers
         return(
@@ -25,7 +31,8 @@ class CustomerList extends Component {
                                 return <Customer 
                                     customer={customer} 
                                     key={customer.id} 
-                                    onDelete={this.onDelete} 
+                                    onDelete={this.onDelete}
+                                    onEdit={this.onEdit} 
                                 />
                             })}
                     </tbody>
